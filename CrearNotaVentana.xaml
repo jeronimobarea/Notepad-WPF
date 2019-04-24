@@ -1,0 +1,46 @@
+﻿<Window x:Class="Bloc_notas_wpf.CrearNotaVentana"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Bloc_notas_wpf"
+        mc:Ignorable="d"
+        Title="CrearNotaVentana" Height="720" Width="1280" Initialized="Window_Initialized" ResizeMode="NoResize" WindowStyle="None" 
+        AllowsTransparency="True" Background="Transparent">
+    <Border CornerRadius="5" BorderBrush="#FF206A4F" BorderThickness="4" Background="White">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="74*"/>
+                <ColumnDefinition Width="1124*"/>
+                <ColumnDefinition Width="74*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="84*"/>
+                <RowDefinition Height="57*"/>
+                <RowDefinition Height="498*"/>
+                <RowDefinition Height="50*"/>
+            </Grid.RowDefinitions>
+            <Rectangle Grid.Row="0" Grid.ColumnSpan="3" Fill="#FFF1F1F1" RadiusY="2.875" RadiusX="2.875" MouseDown="Rectangle_MouseDown" />
+            <TextBox x:Name="textboxContenido" AcceptsReturn="True" HorizontalAlignment="Left" Height="478" Margin="33,10,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Escribe algo aquí..." Padding="25" VerticalAlignment="Top" Width="1203" BorderThickness="0,1,0,1" HorizontalScrollBarVisibility="Auto" Grid.ColumnSpan="3" PreviewMouseDown="TextboxContenido_PreviewMouseDown" LostFocus="TextboxContenido_LostFocus"/>
+            <Button x:Name="botonVolver" Grid.ColumnSpan="2" Background="#FFF1F1F1" Content="Volver" HorizontalAlignment="Left" VerticalAlignment="Top" Width="154" Height="87" Click="BotonVolver_Click" BorderThickness="0" Margin="33,0,0,0"/>
+            <Expander x:Name="expanderRutas" Grid.Column="1" Header="C:\BlocNotas\Default\" HorizontalAlignment="Left" Height="308" Margin="449,23,0,0" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Width="272">
+                <Grid Background="#FFE5E5E5" Height="248">
+                    <ListBox x:Name="listaRutas" Background="#FFE5E5E5" Margin="0,-1,0,50" >
+
+                    </ListBox>
+                    <Button x:Name="botonAddCarpeta" Content="Añadir carpeta" Foreground="White" HorizontalAlignment="Left" Margin="0,198,0,0" VerticalAlignment="Top" Width="270" Height="50" Background="#FF8199B2" BorderBrush="DarkSlateBlue" Click="BotonAddCarpeta_Click"/>
+                </Grid>
+            </Expander>
+            <Button x:Name="botonGuardar" Content="Guardar" Grid.Column="1" HorizontalAlignment="Left" Margin="992,5,0,0" VerticalAlignment="Top" Width="165" Height="59" BorderThickness="0" Background="Transparent" Click="BotonGuardar_Click" Grid.ColumnSpan="2" Grid.RowSpan="2" Grid.Row="1"/>
+            <Button x:Name="BotonLimpiar"  Grid.Column="1" HorizontalAlignment="Left" BorderThickness="0" Background="Transparent" Margin="1021,493,0,0" Grid.Row="2" VerticalAlignment="Top" Width="136" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="63" Click="BotonLimpiar_Click">
+                <TextBlock TextDecorations="Underline" Foreground="Red" >
+                Limpiar
+                </TextBlock>
+            </Button>
+            <Button x:Name="botonCerrar" Content="X" Grid.Column="2" HorizontalAlignment="Left" Margin="34,10,0,0" VerticalAlignment="Top" 
+                BorderThickness="0" Background="IndianRed" Foreground="Black" Width="32" Height="32" Click="BotonCerrar_Click"/>
+            <Button x:Name="botonMinimizar" Content="_" Grid.Column="1" HorizontalAlignment="Left" Margin="1121,10,0,0" VerticalAlignment="Top" 
+                BorderThickness="0" Width="32" Height="32" Click="BotonMinimizar_Click" Grid.ColumnSpan="2"/>
+        </Grid>
+    </Border>
+</Window>
