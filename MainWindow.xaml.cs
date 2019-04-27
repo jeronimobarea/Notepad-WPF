@@ -106,6 +106,11 @@ namespace Bloc_notas_wpf
                 {
                     Directory.CreateDirectory(carpeta[3]);
                     File.Create(carpeta[3] + "rutas.txt").Dispose();
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", carpeta[i] + Environment.NewLine);
+                    }
                 }
             }
             catch (Exception e)
@@ -201,7 +206,7 @@ namespace Bloc_notas_wpf
                 stackTitulo.AppendChild(textoTitulo); // Agregamos un hijo (textTitulo).
 
                 wrap = new FrameworkElementFactory(typeof(WrapPanel)); // Creamos un objeto FrameworkElementFactory de tipo WrapPanel.
-                wrap.SetValue(BackgroundProperty, Brushes.DarkSalmon); // Alteramos las propiedades del objeto.
+                wrap.SetValue(BackgroundProperty, Brushes.LightSteelBlue); // Alteramos las propiedades del objeto.
                 wrap.SetValue(MinWidthProperty, 1080d);
                 wrap.SetValue(MaxWidthProperty, 1080d);
                 wrap.AppendChild(stackTitulo); // Agregamos los hijos.
@@ -223,7 +228,7 @@ namespace Bloc_notas_wpf
                 border.SetValue(MarginProperty, new Thickness(0d, 10d, 0d, 0d));
                 border.SetValue(BackgroundProperty, Brushes.White);
                 border.SetValue(BorderBrushProperty, Brushes.LightGray);
-                border.SetValue(BorderThicknessProperty, new Thickness(0,1,0,1));
+                border.SetValue(BorderThicknessProperty, new Thickness(2));
                 border.SetValue(Border.CornerRadiusProperty, new CornerRadius(3));
                 border.AppendChild(stack); // Agregamos el hijo (stack).
                 #endregion

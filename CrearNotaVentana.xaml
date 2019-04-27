@@ -7,7 +7,13 @@
         mc:Ignorable="d"
         Title="CrearNotaVentana" Height="720" Width="1280" Initialized="Window_Initialized" ResizeMode="NoResize" WindowStyle="None" 
         AllowsTransparency="True" Background="Transparent">
-    <Border CornerRadius="5" BorderBrush="#FF206A4F" BorderThickness="4" Background="White">
+    <Border CornerRadius="5" BorderThickness="4" Background="White">
+        <Border.BorderBrush>
+            <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                <GradientStop Color="#FFBB2849" Offset="1"/>
+                <GradientStop Color="#FF4E7DB8"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="74*"/>

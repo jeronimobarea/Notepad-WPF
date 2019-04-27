@@ -7,7 +7,13 @@
         mc:Ignorable="d"
         Title="jeropad" Height="720" Width="1280" ResizeMode="NoResize" Initialized="Window_Initialized" WindowStyle="None" 
         AllowsTransparency="True" Background="Transparent">
-    <Border CornerRadius="5" BorderBrush="#FF206A4F" BorderThickness="4" Background="White">
+    <Border CornerRadius="5" BorderThickness="4" Background="White">
+        <Border.BorderBrush>
+            <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                <GradientStop Color="#FFBB2849" Offset="1"/>
+                <GradientStop Color="#FF4E7DB8"/>
+            </LinearGradientBrush>
+        </Border.BorderBrush>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="74*"/>
@@ -24,9 +30,16 @@
                      Width="1126" HorizontalContentAlignment="Center">
                 </ListBox>
             </WrapPanel>
-            <Rectangle Grid.Row="0" Grid.ColumnSpan="3" Fill="#FFF1F1F1" RadiusY="2.938" RadiusX="2.938" MouseDown="Rectangle_MouseDown"/>
+            <Rectangle Grid.Row="0" Grid.ColumnSpan="3" RadiusY="1" RadiusX="1" MouseDown="Rectangle_MouseDown" HorizontalAlignment="Left" Width="1272">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0,1" MappingMode="RelativeToBoundingBox" StartPoint="1,0">
+                        <GradientStop Color="#FFBB2849" Offset="1"/>
+                        <GradientStop Color="#FF4D7EB9"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
             <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Fill="White"/>
-            <Button x:Name="botonNuevanota" Grid.Row="2" Grid.ColumnSpan="3" Content="Nueva nota" Background="#FF206A4F" Foreground="White" 
+            <Button x:Name="botonNuevanota" Grid.Row="2" Grid.ColumnSpan="3" Content="Nueva nota" Background="#FF0F4E7A" Foreground="White" 
                 BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="BotonNuevanota_Click"/>
             <Expander x:Name="expanderRutas" Grid.Column="1" Header="C:\BlocNotas\Default\" HorizontalAlignment="Left" Height="283" Margin="488,6,0,0" 
                   Grid.Row="1" VerticalAlignment="Top" Width="272" Panel.ZIndex="3">
@@ -59,7 +72,7 @@
                    BorderThickness="0" Width="32" Height="32" Click="BotonMinimizar_Click"/>
             <Button x:Name="botonRefrescar" Grid.Column="1" HorizontalAlignment="Left" Margin="1,0,0,0" VerticalAlignment="Top" 
                     Width="101" Height="88" Click="BotonRefrescar_Click" BorderThickness="0" Background="Transparent">
-                <TextBlock TextDecorations="Underline" Foreground="DarkSlateBlue" >
+                <TextBlock TextDecorations="Underline" Foreground="White" >
                 Refrescar
                 </TextBlock>
             </Button>
