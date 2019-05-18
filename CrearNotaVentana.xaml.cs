@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
 
 namespace Bloc_notas_wpf
 {
@@ -30,7 +31,7 @@ namespace Bloc_notas_wpf
         private string[] carpeta = { @"C:\BlocNotas\", @"C:\BlocNotas\Default\", @"C:\BlocNotas\Papelera\", @"C:\BlocNotas\rutas\", "Actual" };
         private string archivo;
         #endregion
-
+        string nombre;
         #region >>>>> Declaración de Listas.
         /*
          * Creamos una lista (listRutas) que almacenará objetos de datosRutas.
@@ -64,8 +65,40 @@ namespace Bloc_notas_wpf
 
                 if (archivo != null || carpetaActual != null) // Si alguna de las dos variables que nos pasan son null ejecutamos el if.
                 {
-                    carpeta[4] = carpetaActual; // carpeta[4] (carpeta actual) pasa a ser la carpeta que nos han pasado.
-                    EditarNota(); // Ejecutamos el metodo EditarNota().
+                    MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+                    {
+                        Server = "Localhost",
+                        UserID = "root",
+                        Password = "",
+                        Database = "bloc_notas"
+                    };
+
+                    string consulta = "SELECT Contenido FROM notas WHERE Titulo = '" + archivo + "';";
+
+                    using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+                    {
+                        con.Open();
+                        using (MySqlCommand cmd = new MySqlCommand(consulta, con))
+                        {
+                            try
+                            {
+                                MySqlDataReader reader;
+                                reader = cmd.ExecuteReader();
+
+                                while (reader.Read())
+                                {
+                                    string rt = reader.GetValue(0).ToString();
+                                    textboxContenido.Text = rt;
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                                Console.Write("Error " + e.ToString());
+                            }
+                        }
+                        con.Close();
+                    }
                 }
                 else
                 {
@@ -125,22 +158,60 @@ namespace Bloc_notas_wpf
          */
         private void LeerRutas()
         {
-            try
+            //try
+            //{
+            //    int numLineas = File.ReadLines(carpeta[3] + "rutas.txt").Count();
+
+            //    listRutas.Clear();
+            //    GenerarRutas();
+
+            //    for (int i = 0; i < numLineas; i++)
+            //    {
+            //        string[] rt = File.ReadLines(carpeta[3] + "rutas.txt").ToArray();
+            //        listRutas.Add(new datosRutas(rt[i].ToString()));
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
             {
-                int numLineas = File.ReadLines(carpeta[3] + "rutas.txt").Count();
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
 
-                listRutas.Clear();
-                GenerarRutas();
+            string consulta = "SELECT Ruta FROM rutas;";
 
-                for (int i = 0; i < numLineas; i++)
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
                 {
-                    string[] rt = File.ReadLines(carpeta[3] + "rutas.txt").ToArray();
-                    listRutas.Add(new datosRutas(rt[i].ToString()));
+                    try
+                    {
+                        listRutas.Clear(); // Limpiamos la lista (listRutas).
+                        GenerarRutas(); // Generamos el DataTemplate.
+
+                        MySqlDataReader reader;
+                        reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            String rt = reader.GetValue(0).ToString();
+                            listRutas.Add(new datosRutas(rt));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                        Console.Write("Error " + e.ToString());
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
+                con.Close();
             }
         }
         /*
@@ -148,71 +219,125 @@ namespace Bloc_notas_wpf
          */
         private void BuscarCarpeta()
         {
-            try
-            {
-                using (var fbd = new FolderBrowserDialog())
-                {
-                    DialogResult result = fbd.ShowDialog();
+            //try
+            //{
+            //    using (var fbd = new FolderBrowserDialog())
+            //    {
+            //        DialogResult result = fbd.ShowDialog();
 
-                    if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
-                    {
-                        string path = fbd.SelectedPath;
+            //        if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+            //        {
+            //            string path = fbd.SelectedPath;
 
-                        System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", path + Environment.NewLine);
-                        LeerRutas();
-                    }
+            //            System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", path + Environment.NewLine);
+            //            LeerRutas();
+            //        }
 
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
-            }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            ventanaRutas ru = new ventanaRutas();
+            ru.Show();
+            LeerRutas();
         }
         /*
          * El metodo CrearArchivo() crea un archivo txt con el contenido del textbox.
          */
         public void CrearArchivo()
         {
-            try
+            //try
+            //{
+            //    String[] nombreArchivoPartes = textboxContenido.Text.Split(' '); // Separa el texto del textbox por espacios y lo añade al array.
+            //    string nombreArchivo = ""; // Creamos un string que almacenará el nombre del archivo.
+
+            //    for (int i = 0; i < nombreArchivoPartes.Length; i++) // Añadimos las tres primeras palabras del array al nombreArchivo.
+            //    {
+            //        if (i < 3)
+            //        {
+            //            nombreArchivo += nombreArchivoPartes[i];
+            //        }
+            //        else
+            //        {
+            //            break;
+            //        }
+            //    }
+
+            //    string vacio = textboxContenido.Text; // Creamos un string que almacenará el el contenido del textbox.
+
+            //    if (!File.Exists(carpeta[4] + nombreArchivo + ".txt")) // Si el archivo no existe añade el texto al archivo.
+            //    {
+            //        using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + ".txt"))
+            //        {
+            //            sw.Write(vacio);
+            //            sw.Close();
+            //        }
+            //    }
+            //    else // Si el archivo existe añade un 1 al final del nombre.
+            //    {
+            //        using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + "(1).txt"))
+            //        {
+            //            sw.Write(vacio);
+            //            sw.Close();
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            String[] nombreArchivoPartes = textboxContenido.Text.Split(' '); // Separa el texto del textbox por espacios y lo añade al array.
+            string nombreArchivo = ""; // Creamos un string que almacenará el nombre del archivo.
+
+            for (int i = 0; i < nombreArchivoPartes.Length; i++) // Añadimos las tres primeras palabras del array al nombreArchivo.
             {
-                String[] nombreArchivoPartes = textboxContenido.Text.Split(' '); // Separa el texto del textbox por espacios y lo añade al array.
-                string nombreArchivo = ""; // Creamos un string que almacenará el nombre del archivo.
-
-                for (int i = 0; i < nombreArchivoPartes.Length; i++) // Añadimos las tres primeras palabras del array al nombreArchivo.
+                if (i < 3)
                 {
-                    if (i < 3)
-                    {
-                        nombreArchivo += nombreArchivoPartes[i];
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    nombreArchivo += nombreArchivoPartes[i];
                 }
-
-                string vacio = textboxContenido.Text; // Creamos un string que almacenará el el contenido del textbox.
-
-                if (!File.Exists(carpeta[4] + nombreArchivo + ".txt")) // Si el archivo no existe añade el texto al archivo.
+                else
                 {
-                    using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + ".txt"))
-                    {
-                        sw.Write(vacio);
-                        sw.Close();
-                    }
-                }
-                else // Si el archivo existe añade un 1 al final del nombre.
-                {
-                    using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + "(1).txt"))
-                    {
-                        sw.Write(vacio);
-                        sw.Close();
-                    }
+                    break;
                 }
             }
-            catch (Exception e)
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
             {
-                Console.Write(e.ToString());
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
+
+            DateTime dt = new DateTime();
+
+            string ruta = "'" + expanderRutas.Header.ToString() + "'";
+            nombre = "'" + nombreArchivo + "'";
+            string fecha = "'" + dt.Date.ToString() + "'";
+            string contenido = "'" + textboxContenido.Text + "'";
+
+            string consulta = "INSERT INTO notas (Titulo, Ruta, Fecha, Contenido) VALUES (" + nombre + "," + ruta + "," + fecha + "," + contenido + ");";
+
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
+                {
+                    try
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                        Console.Write("Error " + e.ToString());
+                    }
+                }
+                con.Close();
             }
 
         }
@@ -221,30 +346,89 @@ namespace Bloc_notas_wpf
          */
         private void GuardarArchivo()
         {
-            try
-            {
-                string contenido = textboxContenido.Text; // Este string almacena el contenido del textbox.
+            //try
+            //{
+            //    string contenido = textboxContenido.Text; // Este string almacena el contenido del textbox.
 
-                if (archivo != null) // Si el archivo que nos han pasado no es null ejecuta el if.
-                {
-                    if (File.Exists(carpeta[4] + archivo)) // Si el archivo exista ya en la carpeta lo borra para actualizar el contenido.
-                    {
-                        File.Delete(carpeta[4] + archivo); // Borra el archivo.
-                    }
-                    System.IO.File.WriteAllText(carpeta[4] + archivo, contenido); // Escribe el contenido en el archivo.
-                }
-                else // Si el archivo no es null y contenido no esta vacio ejecuta el metodo CrearArchivo().
-                {
-                    if (contenido != "")
-                    {
-                        CrearArchivo();
-                    }
+            //    if (archivo != null) // Si el archivo que nos han pasado no es null ejecuta el if.
+            //    {
+            //        if (File.Exists(carpeta[4] + archivo)) // Si el archivo exista ya en la carpeta lo borra para actualizar el contenido.
+            //        {
+            //            File.Delete(carpeta[4] + archivo); // Borra el archivo.
+            //        }
+            //        System.IO.File.WriteAllText(carpeta[4] + archivo, contenido); // Escribe el contenido en el archivo.
+            //    }
+            //    else // Si el archivo no es null y contenido no esta vacio ejecuta el metodo CrearArchivo().
+            //    {
+            //        if (contenido != "")
+            //        {
+            //            CrearArchivo();
+            //        }
 
-                }
-            }
-            catch (Exception e)
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
             {
-                Console.Write(e.ToString());
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
+
+            DateTime dt = new DateTime();
+            string fecha = "'" + dt.Date.ToString() + "'";
+            string contenido = "'" + textboxContenido.Text + "'";
+
+            string consulta = "select count(*) from notas where Titulo = '" + archivo + "'";
+            string consultaUpdate = "UPDATE notas SET Ruta = " + "'1'" + ", Fecha = " + fecha + ", Contenido = " + contenido + "WHERE Titulo = '" + archivo + "'";
+
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
+                {
+                    try
+                    {
+                        MySqlDataReader reader;
+                        reader = cmd.ExecuteReader();
+
+                        int existe;
+
+                        if (reader.Read())
+                        {
+                            existe = reader.GetInt32(0);
+
+                            if (existe > 0)
+                            {
+                                using (MySqlConnection con2 = new MySqlConnection(builder.ToString()))
+                                {
+                                    con2.Open();
+                                    using (MySqlCommand cmd2 = new MySqlCommand(consultaUpdate, con2))
+                                    {
+                                        cmd2.ExecuteNonQuery();
+                                    }
+                                    con2.Close();
+                                }
+
+                            }
+                            else
+                            {
+                                CrearArchivo();
+                            }
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                        Console.Write("Error " + e.ToString());
+                    }
+                }
+                con.Close();
             }
         }
         /*

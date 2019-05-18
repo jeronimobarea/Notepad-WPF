@@ -41,7 +41,7 @@
             <Rectangle Grid.Row="1" Grid.ColumnSpan="3" Fill="White"/>
             <Button x:Name="botonNuevanota" Grid.Row="2" Grid.ColumnSpan="3" Content="Nueva nota" Background="#FF0F4E7A" Foreground="White" 
                 BorderThickness="0" FontSize="14" FontWeight="SemiBold" Click="BotonNuevanota_Click"/>
-            <Expander x:Name="expanderRutas" Grid.Column="1" Header="C:\BlocNotas\Default\" HorizontalAlignment="Left" Height="283" Margin="488,6,0,0" 
+            <Expander x:Name="expanderRutas" Grid.Column="1" Header="1" HorizontalAlignment="Left" Height="283" Margin="488,6,0,0" 
                   Grid.Row="1" VerticalAlignment="Top" Width="272" Panel.ZIndex="3">
                 <Grid Background="#FFE5E5E5" Height="230">
                     <ListBox x:Name="listaRutas" Background="#FFE5E5E5" Margin="0,0,0,50" ScrollViewer.HorizontalScrollBarVisibility="Disabled">

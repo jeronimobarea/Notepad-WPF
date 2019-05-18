@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MySql.Data.MySqlClient;
 
 namespace Bloc_notas_wpf
 {
@@ -29,8 +30,8 @@ namespace Bloc_notas_wpf
          * Declaramos un array Titulos que almacena los titulos de las notas que previsualizamos.
          * Creamos un contador que nos ayudará a crear diferentes identificadores y navegar por los arrays.
          */
-        private string[] carpeta = { @"C:\BlocNotas\", @"C:\BlocNotas\Default\", @"C:\BlocNotas\Papelera\", @"C:\BlocNotas\rutas\", "Actual" };
         private string[] Titulos = new string[1000];
+        private string carpetaActual;
         private int contador = 0;
         #endregion
 
@@ -40,7 +41,7 @@ namespace Bloc_notas_wpf
          * Declaramos una Lista llamada "ListRutas" que alamacenará un objeto datosRutas.
          */
         private List<datosNotas> listNotas = new List<datosNotas>();
-        private List<datosRutas> listRutas = new List<datosRutas>(); 
+        private List<datosRutas> listRutas = new List<datosRutas>();
         #endregion
 
         #region >>>>> Declaración de Plantillas (DataTemplate).
@@ -83,35 +84,12 @@ namespace Bloc_notas_wpf
          * En el archivo rutas txt se almacenarán todas las carpetas que agreguemos al expander.
          * Comprobamos la ejecución con un try y un catch.
          */
-        private void CrearDirectoriosDefault()
+        private void CrearBaseDeDatos()
         {
             try
             {
-                if (!Directory.Exists(carpeta[0]))
-                {
-                    Directory.CreateDirectory(carpeta[0]);
-                }
-
-                if (!Directory.Exists(carpeta[1]))
-                {
-                    Directory.CreateDirectory(carpeta[1]);
-                }
-
-                if (!Directory.Exists(carpeta[2]))
-                {
-                    Directory.CreateDirectory(carpeta[2]);
-                }
-
-                if (!Directory.Exists(carpeta[3]))
-                {
-                    Directory.CreateDirectory(carpeta[3]);
-                    File.Create(carpeta[3] + "rutas.txt").Dispose();
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", carpeta[i] + Environment.NewLine);
-                    }
-                }
+                BaseDeDatos bd = new BaseDeDatos();
+                bd.CrearBaseDeDatos();
             }
             catch (Exception e)
             {
@@ -249,31 +227,75 @@ namespace Bloc_notas_wpf
          */
         private void LeerNotas()
         {
-            try
-            {
-                contador = 0; // Reinicia el contador a 0.
-                listNotas.Clear(); // Limpia la lista que almacena las notas.
-                Array.Clear(Titulos, 0, Titulos.Length); // Limpia el array titulos.
-                GenerarObjetos(); // Genera los objetos nota.
+            //try
+            //{
+            //    contador = 0; // Reinicia el contador a 0.
+            //    listNotas.Clear(); // Limpia la lista que almacena las notas.
+            //    Array.Clear(Titulos, 0, Titulos.Length); // Limpia el array titulos.
+            //    GenerarObjetos(); // Genera los objetos nota.
 
-                foreach (string file in Directory.EnumerateFiles(carpeta[4], "*.txt")) // Da una vuelta por cada archivo en la carpeta actual.
+            //    foreach (string file in Directory.EnumerateFiles(carpeta[4], "*.txt")) // Da una vuelta por cada archivo en la carpeta actual.
+            //    {
+            //        string Titulo = System.IO.Path.GetFileName(file); // Almacena el titulo del archivo actual.
+
+            //        Titulos[contador] = Titulo; // Añade el titulo al array.
+
+            //        string[] partesfecha = Convert.ToString(File.GetLastAccessTime(file)).Split(' '); // Separa la fecha por espacios.
+            //        string fecha = partesfecha[1] + "  -  " + partesfecha[0]; // Agrega los espacios 1 y 0 del array partesfecha.
+
+            //        string Texto = File.ReadAllText(file).ToString(); // Almacena el texto del archivo.
+
+            //        listNotas.Add(new datosNotas(Titulo, Texto, fecha, "identificador_" + contador)); // Crea un nuevo objeto y lo añade a la lista con los valores indicados.
+            //        contador++; // Suma 1 al contador por cada vuelta.
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+            {
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
+
+            string consulta = "SELECT * FROM notas WHERE Ruta = " + expanderRutas.Header.ToString();
+
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
                 {
-                    string Titulo = System.IO.Path.GetFileName(file); // Almacena el titulo del archivo actual.
+                    try
+                    {
+                        contador = 0;
+                        listNotas.Clear();
+                        Array.Clear(Titulos, 0, Titulos.Length);
+                        GenerarObjetos();
 
-                    Titulos[contador] = Titulo; // Añade el titulo al array.
+                        MySqlDataReader reader;
+                        reader = cmd.ExecuteReader();
 
-                    string[] partesfecha = Convert.ToString(File.GetLastAccessTime(file)).Split(' '); // Separa la fecha por espacios.
-                    string fecha = partesfecha[1] + "  -  " + partesfecha[0]; // Agrega los espacios 1 y 0 del array partesfecha.
+                        while (reader.Read())
+                        {
+                            string rt = reader.GetValue(0).ToString();
+                            string Titulo = rt; // Almacena el titulo del archivo actual.
+                            Titulos[contador] = Titulo; // Añade el titulo al array.
 
-                    string Texto = File.ReadAllText(file).ToString(); // Almacena el texto del archivo.
-
-                    listNotas.Add(new datosNotas(Titulo, Texto, fecha, "identificador_" + contador)); // Crea un nuevo objeto y lo añade a la lista con los valores indicados.
-                    contador++; // Suma 1 al contador por cada vuelta.
+                            listNotas.Add(new datosNotas(reader.GetValue(0).ToString(), reader.GetValue(3).ToString(), reader.GetValue(2).ToString(), "identificador_" + contador));
+                            contador++;
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                        Console.Write("Error " + e.ToString());
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
+                con.Close();
             }
         }
         /*
@@ -285,31 +307,67 @@ namespace Bloc_notas_wpf
             {
                 string busqueda = textBox.Text; // Almacena el valor del textbox "buscar".
 
-                if (busqueda != "") // Si busqueda no esta vacio ejecuta la acción.
-                {
-                    contador = 0; // Reinicia el contador a 0.
-                    listNotas.Clear(); // Limpia la lista de objetos.
-                    Array.Clear(Titulos, 0, Titulos.Length); // Limpia el array Titulos.
-                    GenerarObjetos(); // Genera los objetos notas.
+                //if (busqueda != "") // Si busqueda no esta vacio ejecuta la acción.
+                //{
+                //    contador = 0; // Reinicia el contador a 0.
+                //    listNotas.Clear(); // Limpia la lista de objetos.
+                //    Array.Clear(Titulos, 0, Titulos.Length); // Limpia el array Titulos.
+                //    GenerarObjetos(); // Genera los objetos notas.
 
-                    foreach (string file in Directory.EnumerateFiles(carpeta[4], busqueda + ".txt")) // Da vueltas por cada arcchivo que coincida con el criterio.
+                //    //foreach (string file in Directory.EnumerateFiles(carpeta[4], busqueda + ".txt")) // Da vueltas por cada arcchivo que coincida con el criterio.
+                //    //{
+                //    //    string Titulo = System.IO.Path.GetFileName(file); // Almacena el titulo de la nota.
+
+                //    //    Titulos[contador] = Titulo; // Guarda el titulo en el array.
+
+                //    //    string[] partesfecha = Convert.ToString(File.GetLastAccessTime(file)).Split(' '); // Separa las partes de la fecha.
+                //    //    string fecha = partesfecha[1] + "  -  " + partesfecha[0]; // Organiza las partes en otro orden.
+
+                //    //    string Texto = File.ReadAllText(file).ToString(); // Almacena el texto de la nota.
+
+                //    //    listNotas.Add(new datosNotas(Titulo, Texto, fecha, "identificador_" + contador)); // Crea un objeto datos nota y lo agrega a la lista.
+                //    //    contador++; // Suma 1 al contador.
+                //    //}
+                //}
+                //else // Si busqueda esta vacio vuelve a cargar todas las notas.
+                //{
+                //    LeerNotas(); // Ejecuta el metodo LeerNotas().
+                //}
+
+                MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+                {
+                    Server = "Localhost",
+                    UserID = "root",
+                    Password = "",
+                    Database = "bloc_notas"
+                };
+
+                string consulta = "SELECT * FROM notas WHERE Titulo = '" + busqueda + "'";
+
+                using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(consulta, con))
                     {
-                        string Titulo = System.IO.Path.GetFileName(file); // Almacena el titulo de la nota.
+                        contador = 0;
+                        listNotas.Clear();
+                        Array.Clear(Titulos, 0, Titulos.Length);
+                        GenerarObjetos();
 
-                        Titulos[contador] = Titulo; // Guarda el titulo en el array.
+                        MySqlDataReader reader;
+                        reader = cmd.ExecuteReader();
 
-                        string[] partesfecha = Convert.ToString(File.GetLastAccessTime(file)).Split(' '); // Separa las partes de la fecha.
-                        string fecha = partesfecha[1] + "  -  " + partesfecha[0]; // Organiza las partes en otro orden.
+                        while (reader.Read())
+                        {
+                            string rt = reader.GetValue(0).ToString();
+                            string Titulo = rt; // Almacena el titulo del archivo actual.
+                            Titulos[contador] = Titulo; // Añade el titulo al array.
 
-                        string Texto = File.ReadAllText(file).ToString(); // Almacena el texto de la nota.
-
-                        listNotas.Add(new datosNotas(Titulo, Texto, fecha, "identificador_" + contador)); // Crea un objeto datos nota y lo agrega a la lista.
-                        contador++; // Suma 1 al contador.
+                            listNotas.Add(new datosNotas(reader.GetValue(0).ToString(), reader.GetValue(3).ToString(), reader.GetValue(2).ToString(), "identificador_" + contador));
+                            contador++;
+                        }
                     }
-                }
-                else // Si busqueda esta vacio vuelve a cargar todas las notas.
-                {
-                    LeerNotas(); // Ejecuta el metodo LeerNotas().
+                    con.Close();
                 }
             }
             catch (Exception e)
@@ -361,22 +419,60 @@ namespace Bloc_notas_wpf
          */
         public void LeerRutas()
         {
-            try
+            //try
+            //{
+            //    int numLineas = File.ReadLines(carpeta[3] + "rutas.txt").Count(); // Cuenta el numero de lineas del archivo.
+
+            //    listRutas.Clear(); // Limpiamos la lista (listRutas).
+            //    GenerarRutas(); // Generamos el DataTemplate.
+
+            //    for (int i = 0; i < numLineas; i++) // Damos una vuelta por cada numero de lineas en el documento.
+            //    {
+            //        string[] rt = File.ReadLines(carpeta[3] + "rutas.txt").ToArray(); // Agregamos las lineas al array.
+            //        listRutas.Add(new datosRutas(rt[i].ToString())); // Creamos un objeto datosRutas con los datos especificados y lo añadimos a la lista.
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
             {
-                int numLineas = File.ReadLines(carpeta[3] + "rutas.txt").Count(); // Cuenta el numero de lineas del archivo.
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
 
-                listRutas.Clear(); // Limpiamos la lista (listRutas).
-                GenerarRutas(); // Generamos el DataTemplate.
+            string consulta = "SELECT Ruta FROM rutas;";
 
-                for (int i = 0; i < numLineas; i++) // Damos una vuelta por cada numero de lineas en el documento.
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
                 {
-                    string[] rt = File.ReadLines(carpeta[3] + "rutas.txt").ToArray(); // Agregamos las lineas al array.
-                    listRutas.Add(new datosRutas(rt[i].ToString())); // Creamos un objeto datosRutas con los datos especificados y lo añadimos a la lista.
+                    try
+                    {
+                        listRutas.Clear(); // Limpiamos la lista (listRutas).
+                        GenerarRutas(); // Generamos el DataTemplate.
+
+                        MySqlDataReader reader;
+                        reader = cmd.ExecuteReader();
+
+                        while (reader.Read())
+                        {
+                            string rt = reader.GetValue(0).ToString();
+                            listRutas.Add(new datosRutas(rt));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Windows.Forms.MessageBox.Show("Error " + e.ToString());
+                        Console.Write("Error " + e.ToString());
+                    }
                 }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
+                con.Close();
             }
         }
         /*
@@ -384,29 +480,33 @@ namespace Bloc_notas_wpf
          */
         private void BuscarCarpeta()
         {
-            try
-            {
-                using (var fbd = new FolderBrowserDialog()) // usamos una variable de tipo FolderBrowserDialog.
-                {
-                    DialogResult result = fbd.ShowDialog(); // Almacenamos el valor de la respuesta en una variable.
+            //try
+            //{
+            //    using (var fbd = new FolderBrowserDialog()) // usamos una variable de tipo FolderBrowserDialog.
+            //    {
+            //        DialogResult result = fbd.ShowDialog(); // Almacenamos el valor de la respuesta en una variable.
 
-                    if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath)) // Si el resultado es Ok (Aceptar) y no esta en blanco o es null ejecuta el if.
-                    {
-                        string path = fbd.SelectedPath; // Guardamos la ruta en un String path 
+            //        if (result == System.Windows.Forms.DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath)) // Si el resultado es Ok (Aceptar) y no esta en blanco o es null ejecuta el if.
+            //        {
+            //            string path = fbd.SelectedPath; // Guardamos la ruta en un String path 
 
-                        System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", path + Environment.NewLine); // Escribimos la ruta nueva en el archivo rutas.txt
-                        LeerRutas(); // Ejecutamos el metodo LeerRutas();
-                    }
+            //            System.IO.File.AppendAllText(carpeta[3] + "rutas.txt", path + Environment.NewLine); // Escribimos la ruta nueva en el archivo rutas.txt
+            //            LeerRutas(); // Ejecutamos el metodo LeerRutas();
+            //        }
 
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
-            }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.Write(e.ToString());
+            //}
+
+            ventanaRutas ru = new ventanaRutas();
+            ru.Show();
+            LeerRutas();
         }
         #endregion
-        
+
         #region >>>>> Todos los Eventos.
         /*
          * Iniciamos la ventana el en centro de la pantalla.
@@ -418,17 +518,17 @@ namespace Bloc_notas_wpf
         private void Window_Initialized(object sender, EventArgs e)
         {
             WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
-
+            carpetaActual = expanderRutas.Header.ToString();
             try
             {
-                CrearDirectoriosDefault();
+                //CrearBaseDeDatos();
             }
             catch (Exception er)
             {
 
                 Console.Write(er.ToString());
             }
-            carpeta[4] = expanderRutas.Header.ToString();
+
             try
             {
                 LeerRutas();
@@ -454,7 +554,7 @@ namespace Bloc_notas_wpf
                 string archivo = Titulos[numeroObjeto]; // Buscamos el titulo con el numeroObjeto en el array y lo agregamos al archivo.
 
                 this.Hide(); // Ocultamos la ventana actual.
-                CrearNotaVentana crearnota = new CrearNotaVentana(archivo, carpeta[4]); // Pasamos la carpeta actual y el titulo del archivo y creamos un objeto CrearNotaVentana.
+                CrearNotaVentana crearnota = new CrearNotaVentana(archivo, carpetaActual); // Pasamos la carpeta actual y el titulo del archivo y creamos un objeto CrearNotaVentana.
                 crearnota.Show(); // Mostramos la venta.
             }
             catch (Exception er)
@@ -474,7 +574,27 @@ namespace Bloc_notas_wpf
                 String[] nombreObjeto = botonPulsado.Name.ToString().Split('_'); // Hacemos un split para acceder al valor numerico del identificador.
                 int numeroObjeto = Convert.ToInt16(nombreObjeto[1]); // Almacenamos el valor numerico en una variable int.
 
-                File.Delete(carpeta[4] + Titulos[numeroObjeto]); // Borramos el archivo que este en la carpeta actual y corresponda con el titulo del indice seleccionado.
+                string archivo = Titulos[numeroObjeto];
+
+                MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+                {
+                    Server = "Localhost",
+                    UserID = "root",
+                    Password = "",
+                    Database = "bloc_notas"
+                };
+
+                string consulta = "DELETE FROM notas WHERE Titulo = '" + archivo + "'";
+
+                using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand(consulta, con))
+                    {
+                        cmd.ExecuteNonQuery();
+                    }
+                    con.Close();
+                }
 
                 LeerNotas(); // Ejecutamos el metodo LeerNotas().
             }
@@ -493,7 +613,7 @@ namespace Bloc_notas_wpf
             try
             {
                 expanderRutas.Header = botonPulsado.Content; // Cambiamos el texto del Header al contenido del boton pulsado.
-                carpeta[4] = expanderRutas.Header.ToString(); // Cambiamos la carpeta actual al texto del header (expander).
+                //carpeta[4] = expanderRutas.Header.ToString(); // Cambiamos la carpeta actual al texto del header (expander).
 
                 LeerNotas(); // Ejecutamos el metodo LeerNotas().
             }
@@ -538,20 +658,40 @@ namespace Bloc_notas_wpf
          */
         private void BotonBorrartodo_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                System.IO.DirectoryInfo di = new DirectoryInfo(carpeta[4]); // Creamos un objeto de tipo DirectoryInfo con ruta carpeta actual (carpeta[4]).
+            //try
+            //{
+            //    System.IO.DirectoryInfo di = new DirectoryInfo(carpeta[4]); // Creamos un objeto de tipo DirectoryInfo con ruta carpeta actual (carpeta[4]).
 
-                foreach (FileInfo file in di.EnumerateFiles()) // Da una vuelta por cada archivo en el objeto di.
+            //    foreach (FileInfo file in di.EnumerateFiles()) // Da una vuelta por cada archivo en el objeto di.
+            //    {
+            //        file.Delete(); // Borra el archivo.
+            //    }
+
+            //    LeerNotas(); // Ejecuta el metodo LeerNotas(). 
+            //}
+            //catch (Exception er)
+            //{
+            //    Console.Write(er.ToString());
+            //}
+
+            MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
+            {
+                Server = "Localhost",
+                UserID = "root",
+                Password = "",
+                Database = "bloc_notas"
+            };
+
+            string consulta = "DELETE FROM notas WHERE Ruta = '" + carpetaActual + "'";
+
+            using (MySqlConnection con = new MySqlConnection(builder.ToString()))
+            {
+                con.Open();
+                using (MySqlCommand cmd = new MySqlCommand(consulta, con))
                 {
-                    file.Delete(); // Borra el archivo.
+                    cmd.ExecuteNonQuery();
                 }
-
-                LeerNotas(); // Ejecuta el metodo LeerNotas(). 
-            }
-            catch (Exception er)
-            {
-                Console.Write(er.ToString());
+                con.Close();
             }
         }
         /*

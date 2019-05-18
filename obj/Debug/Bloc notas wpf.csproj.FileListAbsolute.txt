@@ -32,3 +32,10 @@ C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas
 C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\Bloc notas wpf.csproj.CoreCompileInputs.cache
 C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\Bloc notas wpf.exe
 C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\Bloc notas wpf.pdb
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\bin\Debug\MySql.Data.dll
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\bin\Debug\Google.Protobuf.dll
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\bin\Debug\BouncyCastle.Crypto.dll
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\bin\Debug\MySql.Data.xml
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\Bloc notas wpf.csproj.CopyComplete
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\ventanaRutas.g.cs
+C:\Users\jeron\Desktop\Estudios\Entornos de desarrollo\3ª Evaluacion\Bloc-notas-wpf\obj\Debug\ventanaRutas.baml
