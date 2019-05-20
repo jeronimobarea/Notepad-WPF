@@ -5,10 +5,31 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Bloc_notas_wpf"
         mc:Ignorable="d"
-        Title="ventanaRutas" Height="351.308" Width="498.491">
+        Title="Rutas" Height="351.308" Width="498.491">
     <Grid>
-        <TextBox x:Name="textRuta" HorizontalAlignment="Left" Padding="20" Height="63" Margin="60,53,0,0" TextWrapping="Wrap" Text="Añadir ruta..." VerticalAlignment="Top" Width="360"/>
-        <Button x:Name="btnAdd" Content="AÑDIR" HorizontalAlignment="Left" Margin="60,146,0,0" VerticalAlignment="Top" Width="172" Height="54" Click="BtnAdd_Click"/>
-        <Button x:Name="btnEliminar" Content="ELIMINAR" HorizontalAlignment="Left" Margin="248,146,0,0" VerticalAlignment="Top" Width="172" Height="54" Click="BtnEliminar_Click"/>
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0,1" StartPoint="1,0">
+                <GradientStop Color="#FFBB2849" Offset="1"/>
+                <GradientStop Color="#FF4D7EB9"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <TextBox x:Name="textRuta" HorizontalAlignment="Left" Padding="20" Height="63" Margin="60,82,0,0" TextWrapping="Wrap" Text="Añadir ruta..." VerticalAlignment="Top" Width="360">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="8"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <Button x:Name="btnAdd" Background="Transparent" HorizontalAlignment="Left" Margin="60,175,0,0" VerticalAlignment="Top" Width="172" Height="54" Click="BtnAdd_Click">
+            <TextBlock TextDecorations="Underline" Foreground="White" >
+                AÑADIR
+            </TextBlock>
+        </Button>
+        <Button x:Name="btnEliminar" HorizontalAlignment="Left" Margin="248,175,0,0" VerticalAlignment="Top" Background="Transparent" Width="172" Height="54" Click="BtnEliminar_Click">
+            <TextBlock TextDecorations="Underline" Foreground="White" >
+                ELIMINAR
+            </TextBlock>
+        </Button>
     </Grid>
 </Window>

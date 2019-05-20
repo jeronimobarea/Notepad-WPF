@@ -548,6 +548,7 @@ namespace Bloc_notas_wpf
 
             try
             {
+                carpetaActual = expanderRutas.Header.ToString();
                 String[] nombreObjeto = botonPulsado.Name.ToString().Split('_'); // Hacemos un split para acceder al valor numerico del identificador.
                 int numeroObjeto = Convert.ToInt16(nombreObjeto[1]); // Almacenamos el valor numerico en una variable int.
 

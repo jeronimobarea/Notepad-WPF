@@ -28,10 +28,12 @@ namespace Bloc_notas_wpf
          * Declaramos un array carpeta que almacena las 4 principales carpetas en el 5 espacio almacenaremos la "Carpeta Actual".
          * Declaramos un string archivo que guarda el titulo del archivo que pasa la ventana principal.
          */
+        private string carpetaActual;
         private string[] carpeta = { @"C:\BlocNotas\", @"C:\BlocNotas\Default\", @"C:\BlocNotas\Papelera\", @"C:\BlocNotas\rutas\", "Actual" };
         private string archivo;
-        #endregion
         string nombre;
+        #endregion
+
         #region >>>>> Declaración de Listas.
         /*
          * Creamos una lista (listRutas) que almacenará objetos de datosRutas.
@@ -58,6 +60,8 @@ namespace Bloc_notas_wpf
         public CrearNotaVentana(string archivo, string carpetaActual)
         {
             InitializeComponent();
+            this.carpetaActual = carpetaActual;
+            expanderRutas.Header = carpetaActual;
 
             try
             {

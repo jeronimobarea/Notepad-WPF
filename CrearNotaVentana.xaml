@@ -29,7 +29,7 @@
             <Rectangle Grid.Row="0" Grid.ColumnSpan="3" Fill="#FFF1F1F1" RadiusY="2.875" RadiusX="2.875" MouseDown="Rectangle_MouseDown" />
             <TextBox x:Name="textboxContenido" AcceptsReturn="True" HorizontalAlignment="Left" Height="478" Margin="33,10,0,0" Grid.Row="2" TextWrapping="Wrap" Text="Escribe algo aquí..." Padding="25" VerticalAlignment="Top" Width="1203" BorderThickness="0,1,0,1" HorizontalScrollBarVisibility="Auto" Grid.ColumnSpan="3" PreviewMouseDown="TextboxContenido_PreviewMouseDown" LostFocus="TextboxContenido_LostFocus"/>
             <Button x:Name="botonVolver" Grid.ColumnSpan="2" Background="#FFF1F1F1" Content="Volver" HorizontalAlignment="Left" VerticalAlignment="Top" Width="154" Height="87" Click="BotonVolver_Click" BorderThickness="0" Margin="33,0,0,0"/>
-            <Expander x:Name="expanderRutas" Grid.Column="1" Header="C:\BlocNotas\Default\" HorizontalAlignment="Left" Height="308" Margin="449,23,0,0" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Width="272">
+            <Expander x:Name="expanderRutas" Grid.Column="1" Header="1" HorizontalAlignment="Left" Height="308" Margin="449,23,0,0" Grid.Row="1" Grid.RowSpan="2" VerticalAlignment="Top" Width="272">
                 <Grid Background="#FFE5E5E5" Height="248">
                     <ListBox x:Name="listaRutas" Background="#FFE5E5E5" Margin="0,-1,0,50" >
 
