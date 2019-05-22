@@ -253,46 +253,6 @@ namespace Bloc_notas_wpf
          */
         public void CrearArchivo()
         {
-            //try
-            //{
-            //    String[] nombreArchivoPartes = textboxContenido.Text.Split(' '); // Separa el texto del textbox por espacios y lo añade al array.
-            //    string nombreArchivo = ""; // Creamos un string que almacenará el nombre del archivo.
-
-            //    for (int i = 0; i < nombreArchivoPartes.Length; i++) // Añadimos las tres primeras palabras del array al nombreArchivo.
-            //    {
-            //        if (i < 3)
-            //        {
-            //            nombreArchivo += nombreArchivoPartes[i];
-            //        }
-            //        else
-            //        {
-            //            break;
-            //        }
-            //    }
-
-            //    string vacio = textboxContenido.Text; // Creamos un string que almacenará el el contenido del textbox.
-
-            //    if (!File.Exists(carpeta[4] + nombreArchivo + ".txt")) // Si el archivo no existe añade el texto al archivo.
-            //    {
-            //        using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + ".txt"))
-            //        {
-            //            sw.Write(vacio);
-            //            sw.Close();
-            //        }
-            //    }
-            //    else // Si el archivo existe añade un 1 al final del nombre.
-            //    {
-            //        using (StreamWriter sw = File.CreateText(carpeta[4] + nombreArchivo + "(1).txt"))
-            //        {
-            //            sw.Write(vacio);
-            //            sw.Close();
-            //        }
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.Write(e.ToString());
-            //}
 
             String[] nombreArchivoPartes = textboxContenido.Text.Split(' '); // Separa el texto del textbox por espacios y lo añade al array.
             string nombreArchivo = ""; // Creamos un string que almacenará el nombre del archivo.
@@ -318,13 +278,13 @@ namespace Bloc_notas_wpf
             };
 
             DateTime dt = new DateTime();
-
+            // Asignamos los valores a variables con las comillas.
             string ruta = "'" + expanderRutas.Header.ToString() + "'";
             nombre = "'" + nombreArchivo + "'";
             string fecha = "'" + dt.Date.ToString() + "'";
             string contenido = "'" + textboxContenido.Text + "'";
 
-            string consulta = "INSERT INTO notas (Titulo, Ruta, Fecha, Contenido) VALUES (" + nombre + "," + ruta + "," + fecha + "," + contenido + ");";
+            string consulta = "INSERT INTO notas (Titulo, Ruta, Fecha, Contenido) VALUES (" + nombre + "," + ruta + "," + fecha + "," + contenido + ");"; // Insertamos los valores en la tabla.
 
             using (MySqlConnection con = new MySqlConnection(builder.ToString()))
             {
@@ -350,32 +310,6 @@ namespace Bloc_notas_wpf
          */
         private void GuardarArchivo()
         {
-            //try
-            //{
-            //    string contenido = textboxContenido.Text; // Este string almacena el contenido del textbox.
-
-            //    if (archivo != null) // Si el archivo que nos han pasado no es null ejecuta el if.
-            //    {
-            //        if (File.Exists(carpeta[4] + archivo)) // Si el archivo exista ya en la carpeta lo borra para actualizar el contenido.
-            //        {
-            //            File.Delete(carpeta[4] + archivo); // Borra el archivo.
-            //        }
-            //        System.IO.File.WriteAllText(carpeta[4] + archivo, contenido); // Escribe el contenido en el archivo.
-            //    }
-            //    else // Si el archivo no es null y contenido no esta vacio ejecuta el metodo CrearArchivo().
-            //    {
-            //        if (contenido != "")
-            //        {
-            //            CrearArchivo();
-            //        }
-
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    Console.Write(e.ToString());
-            //}
-
             MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder
             {
                 Server = "Localhost",
@@ -389,7 +323,7 @@ namespace Bloc_notas_wpf
             string contenido = "'" + textboxContenido.Text + "'";
 
             string consulta = "select count(*) from notas where Titulo = '" + archivo + "'";
-            string consultaUpdate = "UPDATE notas SET Ruta = " + "'1'" + ", Fecha = " + fecha + ", Contenido = " + contenido + "WHERE Titulo = '" + archivo + "'";
+            string consultaUpdate = "UPDATE notas SET Ruta = " + "'1'" + ", Fecha = " + fecha + ", Contenido = " + contenido + "WHERE Titulo = '" + archivo + "'"; // Hacemos un update en la nota que coincida con el nombre de la nota.
 
             using (MySqlConnection con = new MySqlConnection(builder.ToString()))
             {
@@ -407,7 +341,7 @@ namespace Bloc_notas_wpf
                         {
                             existe = reader.GetInt32(0);
 
-                            if (existe > 0)
+                            if (existe > 0) // Si existe e mayor que 0 quiere decir que hay una nota que coincide por lo tanto creamos una nueva conexion y command.
                             {
                                 using (MySqlConnection con2 = new MySqlConnection(builder.ToString()))
                                 {
@@ -418,7 +352,6 @@ namespace Bloc_notas_wpf
                                     }
                                     con2.Close();
                                 }
-
                             }
                             else
                             {
@@ -433,25 +366,6 @@ namespace Bloc_notas_wpf
                     }
                 }
                 con.Close();
-            }
-        }
-        /*
-         * El metodo EditarNota() borra el contenido del textbox y añade el de la nota a editar.
-         */
-        private void EditarNota()
-        {
-            try
-            {
-                textboxContenido.Text = "";
-                foreach (string file in Directory.EnumerateFiles(carpeta[4], archivo))
-                {
-                    String contenido = File.ReadAllText(file).ToString();
-                    textboxContenido.Text += contenido;
-                }
-            }
-            catch (Exception e)
-            {
-                Console.Write(e.ToString());
             }
         }
         #endregion
