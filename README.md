@@ -1,6 +1,5 @@
 # Bloc-notas-wpf
 
----
 __Advertisement :)__
 
 This is one of mi first "serious" projects i ever made. It's a simple note app for windows made with WPF and C#.
